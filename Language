@@ -1,0 +1,40 @@
+from translate import Translator
+from gtts import gTTS
+import os
+
+def textTranslate(text, sourceLanguage='en', outputLanguage='es'):
+    try:
+        translator = Translator(from_lang=sourceLanguage, to_lang=outputLanguage)
+        translatedText = translator.translate(text)
+        return translatedText
+    except Exception as e:
+        print(f"There was an issue when attempting to translate the text: {e}")
+        return None
+
+def textToSpeech(text, lang='en'):
+    try:
+        tts = gTTS(text=text, lang=lang)
+        audioFile = "translatedAudio.mp3"
+        tts.save(audioFile)
+        os.system(f"start {audioFile}" if os.name == "nt" else f"open {audioFile}")
+    except Exception as e:
+        print(f"There was an error with text-to-speech: {e}")
+
+if __name__ == "__main__":
+    print("Hello and welcome to my translation application!")
+
+    while True:
+        text = input("\nEnter some text you want to be translated (or type 'quit' to exit): ")
+        if text.lower() == 'quit':
+            break
+
+        sourceLanguage = input("Enter the source language code (e.g., 'en'): ")
+        outputLanguage = input("Enter the target language code (e.g., 'es'): ")
+        
+        translatedText = textTranslate(text, sourceLanguage, outputLanguage)
+        if translatedText:
+            print(f"Translated text: {translatedText}")
+
+            playAudio = input("Do you want to hear the translation? (yes/no): ").strip().lower()
+            if playAudio == "yes":
+                textToSpeech(translatedText, lang=outputLanguage)
